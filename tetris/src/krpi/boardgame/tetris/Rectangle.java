@@ -31,10 +31,10 @@ public class Rectangle {
     }
 
     boolean intersects(Rectangle rect) {
-        return !(rect.x >= x+width || 
-           rect.x+rect.width <= x || 
-           rect.y >= y+height ||
-           rect.y+rect.height <= y);
+        return rect.x < x+width && 
+           rect.x+rect.width > x && 
+           rect.y < y+height &&
+           rect.y+rect.height > y;
     }
     
 }

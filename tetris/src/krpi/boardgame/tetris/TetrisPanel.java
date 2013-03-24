@@ -48,8 +48,6 @@ public class TetrisPanel extends JPanel {
                 game.getSpawnArea().getY()*TILE_SIZE, 
                 game.getSpawnArea().getWidth()*TILE_SIZE, 
                 game.getSpawnArea().getHeight()*TILE_SIZE);
-        //g.fillRect(game.getSpawnArea().getX()*TILE_SIZE, game.getSpawnArea().getY()*TILE_SIZE, 
-        //        game.getSpawnArea().getWidth()*TILE_SIZE, game.getSpawnArea().getHeight()*TILE_SIZE);
     }
 
     private void paintAllTiles(Graphics g) {

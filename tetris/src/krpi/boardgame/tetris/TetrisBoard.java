@@ -91,9 +91,9 @@ public class TetrisBoard {
     }    
     
     public void spawnNext() {
-        if (!block.intersects(getSpawnArea())) {
+        if ( ! block.intersects(getSpawnArea())) {
             tiles.addAll(block.getTiles());
-            block = createBlock();
+            setBlockAndPropagate(createBlock());
         }
     }  
     
