@@ -91,4 +91,25 @@ public class Block {
                 );
     }
 
+    int getWidth() {
+        return r % 2 == 0
+                ? 2
+                : 4;
+    }
+
+    int getHeight() {
+        return r % 2 == 1
+                ? 2
+                : 4;
+    }
+
+    boolean intersects(Rectangle rect) {
+        for (Tile t : getTiles()) {
+            if (t.intersects(rect)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

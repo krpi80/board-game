@@ -49,4 +49,8 @@ public class Tile {
         return "Tile{" + "x=" + x + ", y=" + y + '}';
     }
 
+    boolean intersects(Rectangle rect) {
+        return new Rectangle(x, y, 1, 1).intersects(rect);
+    }
+
 }

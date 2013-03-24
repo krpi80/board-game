@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TetrisBoard {
+    
+    private static final int SPAWN_AREA_WIDTH = 4;
+    
+    private static final int SPAWN_AREA_HEIGHT = 4;
 
     public static abstract class Observer {
         public abstract void onChange();
@@ -24,11 +28,12 @@ public class TetrisBoard {
 
     private Observer observer = NULL_OBSERVER;
     
-    private Block block = new Block(5, 5);
+    private Block block;
     
     public TetrisBoard(int width, int height) {
         this.width = width;
         this.height = height;
+        block = createBlock();
     }
 
     public int getWidth() {
@@ -85,11 +90,18 @@ public class TetrisBoard {
         setBlockIfValid(block.rotate(r));
     }    
     
-    // todo: ???
     public void spawnNext() {
-        tiles.addAll(block.getTiles());
-        setBlockIfValid(new Block(5, 5));
-    }    
+        if (!block.intersects(getSpawnArea())) {
+            tiles.addAll(block.getTiles());
+            block = createBlock();
+        }
+    }  
+    
+    private Block createBlock() {
+        Block b = new Block(getSpawnArea().getX(), getSpawnArea().getX());
+        return b.move((getSpawnArea().getWidth()-b.getWidth()) / 2, 
+                (getSpawnArea().getHeight()-b.getHeight()) / 2);
+    }
     
     private void setBlockIfValid(Block b) {
         if (isValid(b)) {
@@ -126,5 +138,12 @@ public class TetrisBoard {
     
     private void propagateChange() {
         observer.onChange();
+    }
+    
+    public Rectangle getSpawnArea() {
+        return new Rectangle((width-SPAWN_AREA_WIDTH) / 2 , 
+                (height-SPAWN_AREA_HEIGHT) / 2, 
+                SPAWN_AREA_WIDTH, 
+                SPAWN_AREA_HEIGHT);
     }
 }

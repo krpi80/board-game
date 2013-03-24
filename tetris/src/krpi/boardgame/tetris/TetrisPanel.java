@@ -38,7 +38,18 @@ public class TetrisPanel extends JPanel {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        paintSpawnArea(g);
         paintAllTiles(g);
+    }
+
+    private void paintSpawnArea(Graphics g) {
+        g.setColor(Color.LIGHT_GRAY);
+        g.drawRect(game.getSpawnArea().getX()*TILE_SIZE, 
+                game.getSpawnArea().getY()*TILE_SIZE, 
+                game.getSpawnArea().getWidth()*TILE_SIZE, 
+                game.getSpawnArea().getHeight()*TILE_SIZE);
+        //g.fillRect(game.getSpawnArea().getX()*TILE_SIZE, game.getSpawnArea().getY()*TILE_SIZE, 
+        //        game.getSpawnArea().getWidth()*TILE_SIZE, game.getSpawnArea().getHeight()*TILE_SIZE);
     }
 
     private void paintAllTiles(Graphics g) {
@@ -49,8 +60,7 @@ public class TetrisPanel extends JPanel {
 
     private static void paintTile(Graphics g, int x, int y) {
         g.setColor(Color.YELLOW);
-        g.fillRect(x*TILE_SIZE, y*TILE_SIZE, 
-                TILE_SIZE, TILE_SIZE);
+        g.fillRect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
         
         g.setColor(Color.GREEN);
         int innerSize = TILE_SIZE - TILE_BORDER*2;
