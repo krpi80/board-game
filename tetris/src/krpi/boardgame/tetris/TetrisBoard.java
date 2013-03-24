@@ -6,10 +6,15 @@ import java.util.List;
 public class TetrisBoard {
 
     public static abstract class Observer {
-        public void onChange() {}
+        public abstract void onChange();
     }
     
-    private static final Observer NULL_OBSERVER = new Observer() {};
+    private static final Observer NULL_OBSERVER = new Observer() {
+        @Override
+        public void onChange() {
+            
+        }
+    };
     
     private final List<Tile> tiles = new ArrayList<>();
 
