@@ -1,19 +1,15 @@
 package krpi.boardgame.tetris;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Block {
     
-    private int x = 5;
-    private int y = 5;
-    private int r = 0;
-    
-    protected Block(int x, int y, int r) {
-        this.x = x;
-        this.y = y;
-        this.r = r;
-    }
+    private final int x;
+    private final int y;
+    private final int orientation;
+    private final List<Tile> tiles;
     
     public Block(int x, int y) {
         this(x, y, 0);
@@ -23,16 +19,23 @@ public class Block {
         return transform(x, y, 0);
     }
     
-    public Block rotate(int r) {
-        return transform(0, 0, r);
+    public Block rotate(int rotation) {
+        return transform(0, 0, rotation);
     }
 
-    private Block transform(int x, int y, int r) {
-        return new Block(this.x + x, this.y + y, calculateRotation(r));
+    private Block transform(int x, int y, int rotation) {
+        return new Block(this.x + x, this.y + y, calculateOrientation(rotation));
     }
 
-    private int calculateRotation(int rotationAmount) {
-        return positiveModulo(this.r + rotationAmount, 4);
+    protected Block(int x, int y, int orientations) {
+        this.x = x;
+        this.y = y;
+        this.orientation = orientations;
+        this.tiles = Collections.unmodifiableList(createTiles());
+    }
+    
+    private int calculateOrientation(int rotationAmount) {
+        return positiveModulo(orientation + rotationAmount, 4);
     }
     
     private static int positiveModulo(int a, int m) {
@@ -42,16 +45,16 @@ public class Block {
                 : signedModulo;
     }
 
-    public List<Tile> getTiles() {
-        switch(r) {
-            case 1: return getTiles90();
-            case 2: return getTiles180();
-            case 3: return getTiles270();
-            default: return getTiles0();
+    private List<Tile> createTiles() {
+        switch(orientation) {
+            case 1: return createTiles90();
+            case 2: return createTiles180();
+            case 3: return createTiles270();
+            default: return createTiles0();
         }
     }
     
-    private List<Tile> getTiles0() {
+    private List<Tile> createTiles0() {
         return Arrays.asList(
                 new Tile(x, y),
                 new Tile(x, y+1),
@@ -61,7 +64,7 @@ public class Block {
                 );
     }
 
-    private List<Tile> getTiles90() {
+    private List<Tile> createTiles90() {
         return Arrays.asList(
                 new Tile(x, y+1),
                 new Tile(x+1, y+1),
@@ -71,7 +74,7 @@ public class Block {
                 );
     }
 
-    private List<Tile> getTiles180() {
+    private List<Tile> createTiles180() {
         return Arrays.asList(
                 new Tile(x, y),
                 new Tile(x+1, y),
@@ -81,7 +84,7 @@ public class Block {
                 );
     }
 
-    private List<Tile> getTiles270() {
+    private List<Tile> createTiles270() {
         return Arrays.asList(
                 new Tile(x, y+1),
                 new Tile(x, y),
@@ -92,17 +95,25 @@ public class Block {
     }
 
     int getWidth() {
-        return r % 2 == 0
+        return isVertical()
                 ? 2
                 : 4;
     }
 
     int getHeight() {
-        return r % 2 == 1
-                ? 2
-                : 4;
+        return isVertical()
+                ? 4
+                : 2;
     }
 
+    private boolean isVertical() {
+        return orientation % 2 == 0;
+    }
+
+    public List<Tile> getTiles() {
+        return tiles;
+    }
+    
     boolean intersects(Rectangle rect) {
         for (Tile t : getTiles()) {
             if (t.intersects(rect)) {
