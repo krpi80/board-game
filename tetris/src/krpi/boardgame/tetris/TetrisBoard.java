@@ -16,7 +16,7 @@ public class TetrisBoard {
     private static final Observer NULL_OBSERVER = new Observer() {
         @Override
         public void onChange() {
-            
+            // do nothing
         }
     };
     
