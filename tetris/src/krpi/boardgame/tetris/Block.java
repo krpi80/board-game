@@ -8,53 +8,42 @@ public class Block {
     
     private final int x;
     private final int y;
-    private final int orientation;
+    private final Orientation orientation;
     private final List<Tile> tiles;
     
     public Block(int x, int y) {
-        this(x, y, 0);
+        this(x, y, Orientation.NORTH);
     }
     
     public Block move(int x, int y) {
-        return transform(x, y, 0);
+        return new Block(this.x + x, this.y + y, orientation);
     }
     
-    public Block rotate(int rotation) {
-        return transform(0, 0, rotation);
+    public Block rotateLeft() {
+        return new Block(x, y, orientation.rotate90CCW());
     }
 
-    private Block transform(int x, int y, int rotation) {
-        return new Block(this.x + x, this.y + y, calculateOrientation(rotation));
+    public Block rotateRight() {
+        return new Block(x, y, orientation.rotate90CW());
     }
 
-    protected Block(int x, int y, int orientations) {
+    protected Block(int x, int y, Orientation orientations) {
         this.x = x;
         this.y = y;
         this.orientation = orientations;
         this.tiles = Collections.unmodifiableList(createTiles());
     }
     
-    private int calculateOrientation(int rotationAmount) {
-        return positiveModulo(orientation + rotationAmount, 4);
-    }
-    
-    private static int positiveModulo(int a, int m) {
-        int signedModulo = a % m;
-        return signedModulo < 0
-                ? signedModulo + m 
-                : signedModulo;
-    }
-
     private List<Tile> createTiles() {
         switch(orientation) {
-            case 1: return createTiles90();
-            case 2: return createTiles180();
-            case 3: return createTiles270();
-            default: return createTiles0();
+            case EAST: return createTilesEast();
+            case SOUTH: return createTilesSouth();
+            case WEST: return createTilesWest();
+            default: return createTilesNorth();
         }
     }
     
-    private List<Tile> createTiles0() {
+    private List<Tile> createTilesNorth() {
         return Arrays.asList(
                 new Tile(x, y),
                 new Tile(x, y+1),
@@ -64,7 +53,7 @@ public class Block {
                 );
     }
 
-    private List<Tile> createTiles90() {
+    private List<Tile> createTilesEast() {
         return Arrays.asList(
                 new Tile(x, y+1),
                 new Tile(x+1, y+1),
@@ -74,7 +63,7 @@ public class Block {
                 );
     }
 
-    private List<Tile> createTiles180() {
+    private List<Tile> createTilesSouth() {
         return Arrays.asList(
                 new Tile(x, y),
                 new Tile(x+1, y),
@@ -84,7 +73,7 @@ public class Block {
                 );
     }
 
-    private List<Tile> createTiles270() {
+    private List<Tile> createTilesWest() {
         return Arrays.asList(
                 new Tile(x, y+1),
                 new Tile(x, y),
@@ -95,19 +84,15 @@ public class Block {
     }
 
     int getWidth() {
-        return isVertical()
+        return orientation.isVertical()
                 ? 2
                 : 4;
     }
 
     int getHeight() {
-        return isVertical()
+        return orientation.isVertical()
                 ? 4
                 : 2;
-    }
-
-    private boolean isVertical() {
-        return orientation % 2 == 0;
     }
 
     public List<Tile> getTiles() {

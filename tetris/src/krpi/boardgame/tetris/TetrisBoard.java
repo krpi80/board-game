@@ -79,16 +79,12 @@ public class TetrisBoard {
     }
     
     public void rotateLeft() {
-        rotate(1);
+        setBlockIfValid(block.rotateLeft());
     }
 
     public void rotateRight() {
-        rotate(-1);
+        setBlockIfValid(block.rotateRight());
     }
-    
-    private void rotate(int r) {
-        setBlockIfValid(block.rotate(r));
-    }    
     
     public void spawnNext() {
         if ( ! block.intersects(getSpawnArea())) {
