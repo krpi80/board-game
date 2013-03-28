@@ -14,8 +14,8 @@ public class Block {
     private final Orientation orientation;
     private final List<Tile> tiles;
     
-    public Block(int x, int y) {
-        this(x, y, Orientation.NORTH);
+    public Block() {
+        this(0, 0, Orientation.NORTH);
     }
     
     public Block move(int x, int y) {

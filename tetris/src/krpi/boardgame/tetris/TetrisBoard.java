@@ -94,7 +94,8 @@ public class TetrisBoard {
     }  
     
     private Block createBlock() {
-        Block b = new Block(getSpawnArea().getX(), getSpawnArea().getX());
+        Block b = new Block()
+                .move(getSpawnArea().getX(), getSpawnArea().getX());
         return b.move((getSpawnArea().getWidth()-b.getWidth()) / 2, 
                 (getSpawnArea().getHeight()-b.getHeight()) / 2);
     }
