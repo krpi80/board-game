@@ -7,73 +7,58 @@ import java.util.List;
 
 public class Block {
     
-    private final int x;
-    private final int y;
-    private final float a;
-    private final float b;
-    private final Orientation orientation;
     private final List<Tile> tiles;
     
     public Block() {
-        this(0, 0, Orientation.NORTH);
+        tiles = Arrays.asList(
+                new Tile(0, 0),
+                new Tile(0, 1),
+                new Tile(0, 2),
+                new Tile(0, 3),
+                new Tile(1, 3)
+                );
     }
     
     public Block move(int x, int y) {
-        return new Block(this.x + x, this.y + y, orientation);
-    }
-    
-    public Block rotateLeft() {
-        return new Block(x, y, orientation.rotate90CCW());
-    }
-
-    public Block rotateRight() {
-        return new Block(x, y, orientation.rotate90CW());
-    }
-
-    protected Block(int x, int y, Orientation orientation) {
-        this.x = x;
-        this.y = y;
-        this.a = x + 0.5f;
-        this.b = y + 1.5f;
-        this.orientation = orientation;
-        this.tiles = Collections.unmodifiableList(createTiles());
-    }
-    
-    private List<Tile> createTiles() {
-        switch(orientation) {
-            case EAST: return createTilesEast();
-            case SOUTH: return createTilesSouth();
-            case WEST: return createTilesWest();
-            default: return createTilesNorth();
+        List<Tile> result = new ArrayList<>(tiles.size());
+        for (Tile tile : tiles) {
+            result.add(new Tile(tile.getX() + x, tile.getY() + y));
         }
+        return new Block(result);
     }
     
-    private List<Tile> createTilesEast() {
-        return rotateTiles(createTilesSouth(), a, b);
+    public Block rotateRight() {
+        return rotateLeft().rotateLeft().rotateLeft();
     }
 
-    private List<Tile> createTilesSouth() {
-        return rotateTiles(createTilesWest(), a, b);
+    public Block rotateLeft() {
+        if (tiles.isEmpty()) {
+            return new Block(tiles);
+        }
+        int minX = tiles.get(0).getX();
+        int maxX = minX;
+        int minY = tiles.get(0).getY();
+        int maxY = minY;
+        for (Tile tile : tiles) {
+            minX = Math.min(minX, tile.getX());
+            maxX = Math.max(maxX, tile.getX());
+            minY = Math.min(minY, tile.getY());
+            maxY = Math.max(maxY, tile.getY());
+        }
+        float a = minX + (maxX - minX) / 2f;
+        float b = minY + (maxY - minY) / 2f;
+        
+        return new Block(rotateTiles(tiles, a, b));
     }
 
-    private List<Tile> createTilesWest() {
-        return rotateTiles(createTilesNorth(), a, b);
-    }
-    
-    private List<Tile> createTilesNorth() {
-        return Arrays.asList(
-                new Tile(x, y),
-                new Tile(x, y+1),
-                new Tile(x, y+2),
-                new Tile(x, y+3),
-                new Tile(x+1, y+3)
-                );
+    protected Block(List<Tile> tiles) {
+        this.tiles = tiles;
     }
     
     private static List<Tile> rotateTiles(List<Tile> tiles, float a, float b) {
         List<Tile> result = new ArrayList<>(tiles.size());
         for (Tile tile : tiles) {
-            result.add(rotateTile(tile,a , b));
+            result.add(rotateTile(tile, a, b));
         }
         return result;
     }
@@ -83,19 +68,33 @@ public class Block {
     }
 
     int getWidth() {
-        return orientation.isVertical()
-                ? 2
-                : 4;
+        if (tiles.isEmpty()) {
+            return 0;
+        }
+        int minX = tiles.get(0).getX();
+        int maxX = minX;
+        for (Tile tile : tiles) {
+            minX = Math.min(minX, tile.getX());
+            maxX = Math.max(maxX, tile.getX());
+        }
+        return maxX - minX + 1;
     }
 
     int getHeight() {
-        return orientation.isVertical()
-                ? 4
-                : 2;
+        if (tiles.isEmpty()) {
+            return 0;
+        }
+        int minY = tiles.get(0).getY();
+        int maxY = minY;
+        for (Tile tile : tiles) {
+            minY = Math.min(minY, tile.getY());
+            maxY = Math.max(maxY, tile.getY());
+        }
+        return maxY - minY + 1;
     }
 
     public List<Tile> getTiles() {
-        return tiles;
+        return Collections.unmodifiableList(tiles);
     }
     
     boolean intersects(Rectangle rect) {
