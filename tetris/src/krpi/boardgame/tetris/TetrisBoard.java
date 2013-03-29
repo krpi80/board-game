@@ -33,7 +33,7 @@ public class TetrisBoard {
     public TetrisBoard(int width, int height) {
         this.width = width;
         this.height = height;
-        block = createBlock();
+        block = spawnBlock();
     }
 
     public int getWidth() {
@@ -89,15 +89,43 @@ public class TetrisBoard {
     public void spawnNext() {
         if ( ! block.intersects(getSpawnArea())) {
             tiles.addAll(block.getTiles());
-            setBlockAndPropagate(createBlock());
+            setBlockAndPropagate(spawnBlock());
         }
     }  
     
-    private Block createBlock() {
-        Block b = new Block()
+    private Block spawnBlock() {
+        Block b = createBlock()
                 .move(getSpawnArea().getX(), getSpawnArea().getX());
         return b.move((getSpawnArea().getWidth()-b.getWidth()) / 2, 
                 (getSpawnArea().getHeight()-b.getHeight()) / 2);
+    }
+    
+    private Block createBlock() {
+        /*return new Block(createTiles(new String[] {
+            "##",
+            " ##",
+            "  ##"
+        }));*/
+        return new Block(createTiles(new String[] {
+            "#",
+            "####"
+        }));
+    }
+    
+    private static List<Tile> createTiles(String[] rows) {
+        List<Tile> tiles = new ArrayList<>();
+        int y = 0;
+        for (String row : rows) {
+            int x = 0;
+            for (char c : row.toCharArray()) {
+                if (! Character.isWhitespace(c)) {
+                    tiles.add(new Tile(x, y));
+                }
+                x++;
+            }
+            y++;
+        }
+        return tiles;
     }
     
     private void setBlockIfValid(Block b) {

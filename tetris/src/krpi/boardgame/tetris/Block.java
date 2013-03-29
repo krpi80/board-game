@@ -1,23 +1,12 @@
 package krpi.boardgame.tetris;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Block {
     
     private final List<Tile> tiles;
-    
-    public Block() {
-        tiles = Arrays.asList(
-                new Tile(0, 0),
-                new Tile(0, 1),
-                new Tile(0, 2),
-                new Tile(0, 3),
-                new Tile(1, 3)
-                );
-    }
     
     public Block move(int x, int y) {
         List<Tile> result = new ArrayList<>(tiles.size());
@@ -36,7 +25,7 @@ public class Block {
         return new Block(rotateTiles(tiles, bi.centerX, bi.centerY));
     }
 
-    protected Block(List<Tile> tiles) {
+    public Block(List<Tile> tiles) {
         if (tiles == null || tiles.isEmpty()) {
             throw new IllegalArgumentException("Need tiles!");
         }
