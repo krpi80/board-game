@@ -32,26 +32,14 @@ public class Block {
     }
 
     public Block rotateLeft() {
-        if (tiles.isEmpty()) {
-            return new Block(tiles);
-        }
-        int minX = tiles.get(0).getX();
-        int maxX = minX;
-        int minY = tiles.get(0).getY();
-        int maxY = minY;
-        for (Tile tile : tiles) {
-            minX = Math.min(minX, tile.getX());
-            maxX = Math.max(maxX, tile.getX());
-            minY = Math.min(minY, tile.getY());
-            maxY = Math.max(maxY, tile.getY());
-        }
-        float a = minX + (maxX - minX) / 2f;
-        float b = minY + (maxY - minY) / 2f;
-        
-        return new Block(rotateTiles(tiles, a, b));
+        BlockInfo bi = getBlockInfo();
+        return new Block(rotateTiles(tiles, bi.centerX, bi.centerY));
     }
 
     protected Block(List<Tile> tiles) {
+        if (tiles == null || tiles.isEmpty()) {
+            throw new IllegalArgumentException("Need tiles!");
+        }
         this.tiles = tiles;
     }
     
@@ -68,30 +56,56 @@ public class Block {
     }
 
     int getWidth() {
-        if (tiles.isEmpty()) {
-            return 0;
-        }
-        int minX = tiles.get(0).getX();
-        int maxX = minX;
-        for (Tile tile : tiles) {
-            minX = Math.min(minX, tile.getX());
-            maxX = Math.max(maxX, tile.getX());
-        }
-        return maxX - minX + 1;
+        BlockInfo bi = getBlockInfo();
+        return bi.maxX - bi.minX + 1;
     }
 
     int getHeight() {
-        if (tiles.isEmpty()) {
-            return 0;
-        }
-        int minY = tiles.get(0).getY();
-        int maxY = minY;
-        for (Tile tile : tiles) {
-            minY = Math.min(minY, tile.getY());
-            maxY = Math.max(maxY, tile.getY());
-        }
-        return maxY - minY + 1;
+        BlockInfo bi = getBlockInfo();
+        return bi.maxY - bi.minY + 1;
     }
+    
+    private BlockInfo getBlockInfo() {
+        return BlockInfo.getBlockInfo(tiles);
+    }
+    
+    private static final class BlockInfo {
+        
+        private final int minX;
+        private final int maxX;
+        private final int minY;
+        private final int maxY;
+        private final float centerX;
+        private final float centerY;
+
+        public BlockInfo(int minX, int maxX, int minY, int maxY, float centerX, float centerY) {
+            this.minX = minX;
+            this.maxX = maxX;
+            this.minY = minY;
+            this.maxY = maxY;
+            this.centerX = centerX;
+            this.centerY = centerY;
+        }
+        
+        public static BlockInfo getBlockInfo(List<Tile> tiles) {
+            assert tiles != null && ! tiles.isEmpty();
+            int minX = tiles.get(0).getX();
+            int maxX = minX;
+            int minY = tiles.get(0).getY();
+            int maxY = minY;
+            for (Tile tile : tiles) {
+                minX = Math.min(minX, tile.getX());
+                maxX = Math.max(maxX, tile.getX());
+                minY = Math.min(minY, tile.getY());
+                maxY = Math.max(maxY, tile.getY());
+            }
+            float centerX = minX + (maxX - minX) / 2f;
+            float centerY = minY + (maxY - minY) / 2f;
+
+            return new BlockInfo(minX, maxX, minY, maxY, centerX, centerY);
+        }
+        
+    }    
 
     public List<Tile> getTiles() {
         return Collections.unmodifiableList(tiles);
