@@ -30,9 +30,35 @@ public class TetrisBoard {
     
     private Block block;
     
+    private final TilesFactory tf;
+    
     public TetrisBoard(int width, int height) {
         this.width = width;
         this.height = height;
+        tf = new TilesFactory(
+                new String[][]{
+                    new String[]{
+                        "#####"
+                    },
+                    new String[]{
+                        "#",
+                        "####"
+                    },
+                    new String[]{
+                        " #",
+                        "###"
+                    },
+                    new String[]{
+                        " #",
+                        "###",
+                        " #"
+                    },
+                    new String[]{
+                        "##",
+                        " ##",
+                        "  ##"
+                    },
+                });
         block = spawnBlock();
     }
 
@@ -101,31 +127,7 @@ public class TetrisBoard {
     }
     
     private Block createBlock() {
-        /*return new Block(createTiles(new String[] {
-            "##",
-            " ##",
-            "  ##"
-        }));*/
-        return new Block(createTiles(new String[] {
-            "#",
-            "###"
-        }));
-    }
-    
-    private static List<Tile> createTiles(String[] rows) {
-        List<Tile> tiles = new ArrayList<>();
-        int y = 0;
-        for (String row : rows) {
-            int x = 0;
-            for (char c : row.toCharArray()) {
-                if (! Character.isWhitespace(c)) {
-                    tiles.add(new Tile(x, y));
-                }
-                x++;
-            }
-            y++;
-        }
-        return tiles;
+        return new Block(tf.create());
     }
     
     private void setBlockIfValid(Block b) {

@@ -101,7 +101,6 @@ public class Block {
 
             return new BlockInfo(minX, maxX, minY, maxY, centerX, centerY);
         }
-        
     }    
     
     private static boolean hasFraction(float f) {
