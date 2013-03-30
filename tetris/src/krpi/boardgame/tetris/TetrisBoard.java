@@ -108,7 +108,7 @@ public class TetrisBoard {
         }));*/
         return new Block(createTiles(new String[] {
             "#",
-            "####"
+            "###"
         }));
     }
     

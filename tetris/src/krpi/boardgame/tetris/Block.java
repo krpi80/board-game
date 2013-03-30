@@ -90,11 +90,23 @@ public class Block {
             }
             float centerX = minX + (maxX - minX) / 2f;
             float centerY = minY + (maxY - minY) / 2f;
+            
+            if (hasFraction(centerX + centerY)) {
+                if (hasFraction(centerX)) {
+                    centerX += 0.5f;
+                } else {
+                    centerX -= 0.5f;
+                }
+            }
 
             return new BlockInfo(minX, maxX, minY, maxY, centerX, centerY);
         }
         
     }    
+    
+    private static boolean hasFraction(float f) {
+        return Math.abs(f % 1) > 0.1;
+    }
 
     public List<Tile> getTiles() {
         return Collections.unmodifiableList(tiles);
