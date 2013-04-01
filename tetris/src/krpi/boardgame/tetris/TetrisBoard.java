@@ -5,9 +5,9 @@ import java.util.List;
 
 public class TetrisBoard {
     
-    private static final int SPAWN_AREA_WIDTH = 4;
+    private static final int SPAWN_AREA_WIDTH = 5;
     
-    private static final int SPAWN_AREA_HEIGHT = 4;
+    private static final int SPAWN_AREA_HEIGHT = 5;
 
     public static abstract class Observer {
         public abstract void onChange();
@@ -31,6 +31,8 @@ public class TetrisBoard {
     private Block block;
     
     private final TilesFactory tf;
+    
+    private int points;
     
     public TetrisBoard(int width, int height) {
         this.width = width;
@@ -116,6 +118,7 @@ public class TetrisBoard {
         if ( ! block.intersects(getSpawnArea())) {
             tiles.addAll(block.getTiles());
             setBlockAndPropagate(spawnBlock());
+            increasePointsAndPropagate();
         }
     }  
     
@@ -162,7 +165,12 @@ public class TetrisBoard {
         block = b;
         propagateChange();
     }
-    
+
+    private void increasePointsAndPropagate() {
+        points++;
+        propagateChange();
+    }
+
     private void propagateChange() {
         observer.onChange();
     }
@@ -173,4 +181,9 @@ public class TetrisBoard {
                 SPAWN_AREA_WIDTH, 
                 SPAWN_AREA_HEIGHT);
     }
+
+    public int getPoints() {
+        return points;
+    }
+
 }
