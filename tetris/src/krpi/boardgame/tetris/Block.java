@@ -3,47 +3,65 @@ package krpi.boardgame.tetris;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class Block {
     
     private final List<Tile> tiles;
     
     public Block move(int x, int y) {
-        List<Tile> result = new ArrayList<>(tiles.size());
-        for (Tile tile : tiles) {
-            result.add(new Tile(tile.getX() + x, tile.getY() + y));
-        }
-        return new Block(result);
+        List<Tile> movedTiles = copyTilesAndMove(x, y);
+        return new Block(movedTiles);
+    }
+    
+    private List<Tile> copyTilesAndMove(final int x, final int y) {
+        return copyTransformedTiles(new TileTransformation() {
+            @Override
+            public Tile transform(Tile tile) {
+                return tile.move(x, y);
+            }
+        });
     }
     
     public Block rotateRight() {
-        return rotateLeft().rotateLeft().rotateLeft();
+        return rotateLeft()
+                .rotateLeft()
+                .rotateLeft();
     }
 
     public Block rotateLeft() {
         BlockInfo bi = getBlockInfo();
-        return new Block(rotateTiles(tiles, bi.centerX, bi.centerY));
+        return new Block(copyTilesAndRotate(bi.centerX, bi.centerY));
     }
 
     public Block(List<Tile> tiles) {
-        if (tiles == null || tiles.isEmpty()) {
+        this.tiles = Objects.requireNonNull(tiles);
+        if (tiles.isEmpty()) {
             throw new IllegalArgumentException("Need tiles!");
         }
-        this.tiles = tiles;
     }
     
-    private static List<Tile> rotateTiles(List<Tile> tiles, float a, float b) {
+    private List<Tile> copyTilesAndRotate(final float a, final float b) {
+        return copyTransformedTiles(new TileTransformation() {
+            @Override
+            public Tile transform(Tile tile) {
+                return tile.rotateCcw(a, b);
+            }
+        });
+    }
+    
+    private List<Tile> copyTransformedTiles(TileTransformation trans) {
         List<Tile> result = new ArrayList<>(tiles.size());
         for (Tile tile : tiles) {
-            result.add(rotateTile(tile, a, b));
+            result.add(trans.transform(tile));
         }
         return result;
     }
     
-    private static Tile rotateTile(Tile tile, float a, float b) {
-        return new Tile((int)(a-b)+tile.getY(), (int)(a+b)-tile.getX());
+    private interface TileTransformation {
+        Tile transform(Tile tile);
     }
-
+    
     int getWidth() {
         BlockInfo bi = getBlockInfo();
         return bi.maxX - bi.minX + 1;
@@ -57,7 +75,7 @@ public class Block {
     private BlockInfo getBlockInfo() {
         return BlockInfo.getBlockInfo(tiles);
     }
-    
+
     private static final class BlockInfo {
         
         private final int minX;

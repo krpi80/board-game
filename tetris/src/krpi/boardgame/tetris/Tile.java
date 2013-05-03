@@ -1,5 +1,7 @@
 package krpi.boardgame.tetris;
 
+import java.util.Objects;
+
 public class Tile {
     
     private final int x;
@@ -20,10 +22,15 @@ public class Tile {
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + x;
-        result = 31 * result + y;
-        return result;
+        return Objects.hash(x, y);
+    }
+    
+    public Tile move(int dx, int dy) {
+        return new Tile(x + dx, y + dy);
+    }
+    
+    public Tile rotateCcw(float a, float b) {
+        return new Tile((int)(a-b)+y, (int)(a+b)-x);
     }
 
     @Override
@@ -49,7 +56,7 @@ public class Tile {
         return "Tile{" + "x=" + x + ", y=" + y + '}';
     }
 
-    boolean intersects(Rectangle rect) {
+    public boolean intersects(Rectangle rect) {
         return new Rectangle(x, y, 1, 1).intersects(rect);
     }
 
