@@ -13,10 +13,19 @@ public class TilesFactory {
     }
     
     public List<Tile> create() {
-        String[] rows = defs[current];
+        String[] rows = nextDefs();
+        return createTiles(rows);
+    }
+    
+    private String[] nextDefs() {
+        return defs[getCurrentAndAdvance()];
+    }
+    
+    private int getCurrentAndAdvance() {
+        int result = current;
         current++;
         current %= defs.length;
-        return createTiles(rows);
+        return result;
     }
     
     private List<Tile> createTiles(String[] rows) {
@@ -34,5 +43,5 @@ public class TilesFactory {
         }
         return tiles;
     }
-    
+
 }

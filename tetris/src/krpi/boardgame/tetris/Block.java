@@ -23,15 +23,44 @@ public class Block {
         });
     }
     
-    public Block rotateRight() {
-        return rotateLeft()
-                .rotateLeft()
-                .rotateLeft();
+    public Block rotateCw() {
+        BlockInfo bi = getBlockInfo();
+        return new Block(copyTilesAndRotateCw(bi.centerX, bi.centerY));
     }
 
-    public Block rotateLeft() {
+    public Block rotateCcw() {
         BlockInfo bi = getBlockInfo();
-        return new Block(copyTilesAndRotate(bi.centerX, bi.centerY));
+        return new Block(copyTilesAndRotateCcw(bi.centerX, bi.centerY));
+    }
+
+    private List<Tile> copyTilesAndRotateCcw(final float a, final float b) {
+        return copyTransformedTiles(new TileTransformation() {
+            @Override
+            public Tile transform(Tile tile) {
+                return tile.rotateCcw(a, b);
+            }
+        });
+    }
+
+    private List<Tile> copyTilesAndRotateCw(final float a, final float b) {
+        return copyTransformedTiles(new TileTransformation() {
+            @Override
+            public Tile transform(Tile tile) {
+                return tile.rotateCw(a, b);
+            }
+        });
+    }
+
+    private List<Tile> copyTransformedTiles(TileTransformation trans) {
+        List<Tile> result = new ArrayList<>(tiles.size());
+        for (Tile tile : tiles) {
+            result.add(trans.transform(tile));
+        }
+        return result;
+    }
+
+    private interface TileTransformation {
+        Tile transform(Tile tile);
     }
 
     public Block(List<Tile> tiles) {
@@ -40,28 +69,7 @@ public class Block {
             throw new IllegalArgumentException("Need tiles!");
         }
     }
-    
-    private List<Tile> copyTilesAndRotate(final float a, final float b) {
-        return copyTransformedTiles(new TileTransformation() {
-            @Override
-            public Tile transform(Tile tile) {
-                return tile.rotateCcw(a, b);
-            }
-        });
-    }
-    
-    private List<Tile> copyTransformedTiles(TileTransformation trans) {
-        List<Tile> result = new ArrayList<>(tiles.size());
-        for (Tile tile : tiles) {
-            result.add(trans.transform(tile));
-        }
-        return result;
-    }
-    
-    private interface TileTransformation {
-        Tile transform(Tile tile);
-    }
-    
+
     int getWidth() {
         BlockInfo bi = getBlockInfo();
         return bi.maxX - bi.minX + 1;

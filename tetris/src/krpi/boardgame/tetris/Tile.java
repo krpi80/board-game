@@ -28,9 +28,13 @@ public class Tile {
     public Tile move(int dx, int dy) {
         return new Tile(x + dx, y + dy);
     }
-    
+
     public Tile rotateCcw(float a, float b) {
         return new Tile((int)(a-b)+y, (int)(a+b)-x);
+    }
+
+    public Tile rotateCw(float a, float b) {
+        return new Tile((int)(a+b)-y, (int)(b-a)+x);
     }
 
     @Override
@@ -42,22 +46,17 @@ public class Tile {
             return false;
         }
         final Tile other = (Tile) obj;
-        if (this.x != other.x) {
-            return false;
-        }
-        if (this.y != other.y) {
-            return false;
-        }
-        return true;
+        return x == other.x
+                && y == other.y;
     }
 
     @Override
     public String toString() {
-        return "Tile{" + "x=" + x + ", y=" + y + '}';
+        return this.getClass().getSimpleName()
+                + "{" + "x=" + x + ", y=" + y + '}';
     }
 
     public boolean intersects(Rectangle rect) {
         return new Rectangle(x, y, 1, 1).intersects(rect);
     }
-
 }

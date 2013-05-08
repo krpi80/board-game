@@ -33,11 +33,11 @@ public class KeyboardHandler extends KeyAdapter {
         }
         if ((code == KeyEvent.VK_LEFT) && (modifiers & KeyEvent.SHIFT_DOWN_MASK) == KeyEvent.SHIFT_DOWN_MASK) {
             rotateLeft();
-            board.rotateLeft();
+            board.rotateCcw();
         }
         if ((code == KeyEvent.VK_RIGHT) && (modifiers & KeyEvent.SHIFT_DOWN_MASK) == KeyEvent.SHIFT_DOWN_MASK) {
             rotateRight();
-            board.rotateRight();
+            board.rotateCw();
         }
         if (code == KeyEvent.VK_SPACE) {
             spawnNext();

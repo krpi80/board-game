@@ -1,7 +1,10 @@
 package krpi.boardgame.tetris;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TetrisBoard {
     
@@ -9,8 +12,10 @@ public class TetrisBoard {
     
     private static final int SPAWN_AREA_HEIGHT = 5;
 
-    public static abstract class Observer {
-        public abstract void onChange();
+
+
+    public interface Observer {
+        void onChange();
     }
     
     private static final Observer NULL_OBSERVER = new Observer() {
@@ -26,11 +31,11 @@ public class TetrisBoard {
     
     private final int height;
 
+    private final TilesFactory tf;
+
     private Observer observer = NULL_OBSERVER;
     
     private Block block;
-    
-    private final TilesFactory tf;
     
     private int points;
     
@@ -80,8 +85,9 @@ public class TetrisBoard {
         this.observer = NULL_OBSERVER;
     }
 
-    public List<Tile> getTiles() {
-        List<Tile> allTiles = new ArrayList<>(this.tiles);
+    public Collection<Tile> getTiles() {
+        Set<Tile> allTiles = new HashSet<>();
+        allTiles.addAll(tiles);
         allTiles.addAll(block.getTiles());
         return allTiles;
     }
@@ -106,21 +112,25 @@ public class TetrisBoard {
         setBlockIfValid(block.move(x, y));
     }
     
-    public void rotateLeft() {
-        setBlockIfValid(block.rotateLeft());
+    public void rotateCcw() {
+        setBlockIfValid(block.rotateCcw());
     }
 
-    public void rotateRight() {
-        setBlockIfValid(block.rotateRight());
+    public void rotateCw() {
+        setBlockIfValid(block.rotateCw());
     }
     
     public void spawnNext() {
-        if ( ! block.intersects(getSpawnArea())) {
+        if (isSpawnAreaClean()) {
             tiles.addAll(block.getTiles());
             setBlockAndPropagate(spawnBlock());
             increasePointsAndPropagate();
         }
     }  
+    
+    private boolean isSpawnAreaClean() {
+        return ! block.intersects(getSpawnArea());
+    }
     
     private Block spawnBlock() {
         Block b = createBlock()
