@@ -12,7 +12,11 @@ public class TetrisBoard {
     
     private static final int SPAWN_AREA_HEIGHT = 5;
 
+    private boolean finished;
 
+    public boolean isFinished() {
+        return finished;
+    }
 
     public interface Observer {
         void onChange();
@@ -38,6 +42,8 @@ public class TetrisBoard {
     private Block block;
     
     private int points;
+
+    private boolean propagate = true;
     
     public TetrisBoard(int width, int height) {
         this.width = width;
@@ -76,6 +82,17 @@ public class TetrisBoard {
     public int getHeight() {
         return height;
     }
+
+    public Rectangle getSpawnArea() {
+        return new Rectangle((width-SPAWN_AREA_WIDTH) / 2 ,
+                0*(height-SPAWN_AREA_HEIGHT) / 2 ,
+                SPAWN_AREA_WIDTH,
+                SPAWN_AREA_HEIGHT);
+    }
+
+    public int getPoints() {
+        return points;
+    }
     
     public void setObserver(Observer observer) {
         this.observer = observer;
@@ -92,24 +109,93 @@ public class TetrisBoard {
         return allTiles;
     }
 
-    public void moveLeft() {
-        move(-1, 0);
+    public boolean moveLeft() {
+        return move(-1, 0);
     }
     
-    public void moveRight() {
-        move(1, 0);
+    public boolean moveRight() {
+        return move(1, 0);
     }
 
-    public void moveUp() {
-        move(0, -1);
+    public boolean moveUp() {
+        return move(0, -1);
     }
 
-    public void moveDown() {
-        move(0, 1);
+    public boolean moveDown() {
+        return move(0, 1);
     }
-    
-    private void move(int x, int y) {
-        setBlockIfValid(block.move(x, y));
+
+    public boolean isPropagate() {
+        return propagate;
+    }
+
+    public void setPropagate(boolean propagate) {
+        this.propagate = propagate;
+    }
+
+    public void tick() {
+        setPropagate(false);
+        boolean moved = moveDown();
+        if (!moved) {
+
+            boolean spawned = spawnNext();
+            if (!spawned) {
+                finish();
+            }
+        }
+        setPropagate(true);
+        propagateChange();
+    }
+
+    private int clearRows() {
+        int points = 0;
+        NextRow:
+        for(int y = height - 1; y >=0; --y) {
+            List<Tile> row = new ArrayList<>(width);
+            for(int x = 0; x < width; x++) {
+
+                Tile tile = findTile(x, y);
+                if(tile == null) {
+                    continue NextRow;
+                }
+                row.add(tile);
+
+            }
+
+            tiles.removeAll(row);
+            points += row.size();
+
+            List<Tile> above = new ArrayList<>(width*height);
+            for (Tile t : tiles) {
+                if (t.getY() < y) {
+                    above.add(t);
+                }
+            }
+
+            tiles.removeAll(above);
+
+            List<Tile> moved = new ArrayList<>(above.size());
+            for (Tile t : above) {
+                moved.add(t.move(0, 1));
+            }
+
+            tiles.addAll(moved);
+
+        }
+        return points;
+    }
+
+    private Tile findTile(int x, int y) {
+        for (Tile t : tiles) {
+            if (t.getX() == x && t.getY() == y) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    private boolean move(int x, int y) {
+        return setBlockIfValid(block.move(x, y));
     }
     
     public void rotateCcw() {
@@ -120,12 +206,15 @@ public class TetrisBoard {
         setBlockIfValid(block.rotateCw());
     }
     
-    public void spawnNext() {
+    public boolean spawnNext() {
         if (isSpawnAreaClean()) {
             tiles.addAll(block.getTiles());
+            int points = clearRows();
             setBlockAndPropagate(spawnBlock());
-            increasePointsAndPropagate();
+            increasePointsAndPropagate(points);
+            return true;
         }
+        return false;
     }  
     
     private boolean isSpawnAreaClean() {
@@ -133,20 +222,25 @@ public class TetrisBoard {
     }
     
     private Block spawnBlock() {
-        Block b = createBlock()
-                .move(getSpawnArea().getX(), getSpawnArea().getX());
-        return b.move((getSpawnArea().getWidth()-b.getWidth()) / 2, 
-                (getSpawnArea().getHeight()-b.getHeight()) / 2);
+        return positionInSpawnAreaCenter(createBlock());
     }
-    
+
+    private Block positionInSpawnAreaCenter(Block b) {
+        return b.move(getSpawnArea().getX(), getSpawnArea().getY())
+                .move((getSpawnArea().getWidth() - b.getWidth()) / 2,
+                        (getSpawnArea().getHeight() - b.getHeight()) / 2);
+    }
+
     private Block createBlock() {
         return new Block(tf.create());
     }
     
-    private void setBlockIfValid(Block b) {
+    private boolean setBlockIfValid(Block b) {
         if (isValid(b)) {
             setBlockAndPropagate(b);
+            return true;
         }
+        return false;
     }
     
     private boolean isValid(Block b) {
@@ -167,7 +261,7 @@ public class TetrisBoard {
     private boolean withinBoard(Tile t) {
         return t.getX() >= 0 
                 && t.getX() < width
-                && t.getY() >= 0
+                /*&& t.getY() >= 0*/
                 && t.getY() < height;
     }
     
@@ -176,24 +270,19 @@ public class TetrisBoard {
         propagateChange();
     }
 
-    private void increasePointsAndPropagate() {
-        points++;
+    private void increasePointsAndPropagate(int points) {
+        this.points += points;
         propagateChange();
     }
 
     private void propagateChange() {
-        observer.onChange();
-    }
-    
-    public Rectangle getSpawnArea() {
-        return new Rectangle((width-SPAWN_AREA_WIDTH) / 2 , 
-                (height-SPAWN_AREA_HEIGHT) / 2, 
-                SPAWN_AREA_WIDTH, 
-                SPAWN_AREA_HEIGHT);
+        if (isPropagate()) {
+            observer.onChange();
+        }
     }
 
-    public int getPoints() {
-        return points;
+    private void finish() {
+        finished = true;
     }
 
 }

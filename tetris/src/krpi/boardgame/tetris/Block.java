@@ -137,7 +137,7 @@ public class Block {
         return Collections.unmodifiableList(tiles);
     }
     
-    boolean intersects(Rectangle rect) {
+    public boolean intersects(Rectangle rect) {
         for (Tile t : getTiles()) {
             if (t.intersects(rect)) {
                 return true;
