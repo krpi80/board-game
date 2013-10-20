@@ -24,7 +24,7 @@ public class TheTetrisGame {
                 final Timer timer = new Timer(1000, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        game.tick();
+                        game.step();
                         panel.repaint();
                         if (game.isFinished()) {
                             panel.removeKeyListener(keyboardHandler);

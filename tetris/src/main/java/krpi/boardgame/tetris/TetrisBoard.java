@@ -1,8 +1,5 @@
 package krpi.boardgame.tetris;
 
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
-
 import java.util.*;
 
 public class TetrisBoard {
@@ -94,15 +91,11 @@ public class TetrisBoard {
         return move(1, 0);
     }
 
-    public boolean moveUp() {
-        return move(0, -1);
-    }
-
     public boolean moveDown() {
         return move(0, 1);
     }
 
-    public void tick() {
+    public void step() {
         boolean moved = moveDown();
         if (!moved) {
 
@@ -172,7 +165,7 @@ public class TetrisBoard {
         setBlockIfValid(block.rotateCw());
     }
     
-    public boolean spawnNext() {
+    private boolean spawnNext() {
         if (isSpawnAreaClean()) {
             tiles.addAll(block.getTiles());
             int points = clearRows();

@@ -29,9 +29,6 @@ public class KeyboardHandler extends KeyAdapter {
         if ((code == KeyEvent.VK_RIGHT) && (modifiers & KeyEvent.SHIFT_DOWN_MASK) == 0) {
             moveRight();
         }
-        if ((code == KeyEvent.VK_UP) && (modifiers & KeyEvent.SHIFT_DOWN_MASK) == 0) {
-            moveUp();
-        }
         if ((code == KeyEvent.VK_DOWN) && (modifiers & KeyEvent.SHIFT_DOWN_MASK) == 0) {
             moveDown();
         }
@@ -40,9 +37,6 @@ public class KeyboardHandler extends KeyAdapter {
         }
         if ((code == KeyEvent.VK_RIGHT) && (modifiers & KeyEvent.SHIFT_DOWN_MASK) == KeyEvent.SHIFT_DOWN_MASK) {
             rotateRight();
-        }
-        if (code == KeyEvent.VK_SPACE) {
-            spawnNext();
         }
     }
 
@@ -55,12 +49,6 @@ public class KeyboardHandler extends KeyAdapter {
     private void moveRight() {
         LOGGER.info("Move Right");
         board.moveRight();
-        panel.repaint();
-    }
-
-    private void moveUp() {
-        LOGGER.info("Move Up");
-        board.moveUp();
         panel.repaint();
     }
 
@@ -82,10 +70,4 @@ public class KeyboardHandler extends KeyAdapter {
         panel.repaint();
     }
 
-    private void spawnNext() {
-        LOGGER.info("Spawn Next");
-        board.spawnNext();
-        panel.repaint();
-    }
-    
 }
