@@ -2,13 +2,21 @@ package krpi.boardgame.tetris;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.logging.Logger;
+
+import static java.util.Objects.requireNonNull;
 
 public class KeyboardHandler extends KeyAdapter {
 
+    private static final Logger LOGGER = Logger.getGlobal();
+
     private final TetrisBoard board;
+
+    private final TetrisPanel panel;
     
-    public KeyboardHandler(TetrisBoard board) {
-        this.board = board;
+    public KeyboardHandler(TetrisBoard board, TetrisPanel panel) {
+        this.board = requireNonNull(board);
+        this.panel = requireNonNull(panel);
     }
 
     @Override
@@ -39,38 +47,45 @@ public class KeyboardHandler extends KeyAdapter {
     }
 
     private void moveLeft() {
-        System.out.println("Move Left");
+        LOGGER.info("Move Left");
         board.moveLeft();
+        panel.repaint();
     }
 
     private void moveRight() {
-        System.out.println("Move Right");
+        LOGGER.info("Move Right");
         board.moveRight();
+        panel.repaint();
     }
 
     private void moveUp() {
-        System.out.println("Move Up");
+        LOGGER.info("Move Up");
         board.moveUp();
+        panel.repaint();
     }
 
     private void moveDown() {
-        System.out.println("Move Down");
+        LOGGER.info("Move Down");
         board.moveDown();
+        panel.repaint();
     }
 
     private void rotateLeft() {
-        System.out.println("Rotate Left");
+        LOGGER.info("Rotate Left");
         board.rotateCcw();
+        panel.repaint();
     }
 
     private void rotateRight() {
-        System.out.println("Rotate Right");
+        LOGGER.info("Rotate Right");
         board.rotateCw();
+        panel.repaint();
     }
 
     private void spawnNext() {
-        System.out.println("Spawn Next");
+        LOGGER.info("Spawn Next");
         board.spawnNext();
+        panel.repaint();
     }
     
 }
