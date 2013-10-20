@@ -2,9 +2,7 @@ package krpi.boardgame.tetris;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TileTest {
 

@@ -1,5 +1,8 @@
 package krpi.boardgame.tetris;
 
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
+
 import java.util.*;
 
 public class TetrisBoard {
@@ -10,7 +13,7 @@ public class TetrisBoard {
 
     private boolean finished;
 
-    private final List<Tile> tiles = new LinkedList<>();
+    private final Set<Tile> tiles = new HashSet<>();
 
     private final int width;
 
